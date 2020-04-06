@@ -1,23 +1,35 @@
 <template>
   <div class="hello">
-    <form class="form-inline justify-content-center">
-      <div class="col-auto">
-        <button class="btn btn-primary" type="button" v-on:click="read()">スタート</button>
-      </div>
-      <div class="col-auto">
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="checkbox" id="check-autoplay" v-model="autoplay" />
-          <label class="form-check-label" for="check-autoplay">Auto Play</label>
+    <div class="container">
+      <form class="form-inline justify-content-center">
+        <div class="col-auto">
+          <button class="btn btn-primary" type="button" v-on:click="read()">スタート</button>
         </div>
-      </div>
-      <div class="col-auto">
-        <input class="form-control" type="number" v-model.number="duration" />
-      </div>
-    </form>
-    <p>{{ selected }}</p>
-    <ul>
-      <li v-for="item in cards" :key="item">{{ item }}</li>
-    </ul>
+        <div class="col-auto">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="check-autoplay" v-model="autoplay" />
+            <label class="form-check-label" for="check-autoplay">Auto Play</label>
+          </div>
+        </div>
+        <div class="col-auto">
+          <input
+            class="form-control"
+            type="number"
+            id="num-duration"
+            placeholder="Duration"
+            v-model.number="duration"
+          />
+        </div>
+      </form>
+    </div>
+    <div class="container">
+      <p class="h4">{{ selected }}</p>
+    </div>
+    <div class="container">
+      <ul class="list-group">
+        <li class="list-group-item" v-for="item in cards" :key="item">{{ item }}</li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -52,12 +64,13 @@ export default {
       })(this.cards);
 
       // pickup
-      this.selected = this.cards.pop();
+      const selected = this.cards.pop();
 
       // speech
-      const utter = new SpeechSynthesisUtterance(this.selected);
+      const utter = new SpeechSynthesisUtterance(selected);
       utter.onend = () => {
-        console.log(this.selected);
+        this.selected = selected;
+
         // autoplay
         if (this.autoplay && this.cards.length > 0)
           setTimeout(() => {
