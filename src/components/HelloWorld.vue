@@ -1,9 +1,19 @@
 <template>
   <div class="hello">
-    <button v-on:click="read()">スタート</button>
-    <input type="checkbox" v-model="autoplay" />
-    <input type="number" v-model.number="duration" />
-
+    <form class="form-inline justify-content-center">
+      <div class="col-auto">
+        <button class="btn btn-primary" type="button" v-on:click="read()">スタート</button>
+      </div>
+      <div class="col-auto">
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="check-autoplay" v-model="autoplay" />
+          <label class="form-check-label" for="check-autoplay">Auto Play</label>
+        </div>
+      </div>
+      <div class="col-auto">
+        <input class="form-control" type="number" v-model.number="duration" />
+      </div>
+    </form>
     <p>{{ selected }}</p>
     <ul>
       <li v-for="item in cards" :key="item">{{ item }}</li>
@@ -12,6 +22,10 @@
 </template>
 
 <script>
+const _getRandom = (min, max) => {
+  return min + Math.random() * (max - min);
+};
+
 export default {
   name: "HelloWorld",
   props: {},
@@ -48,8 +62,11 @@ export default {
         if (this.autoplay && this.cards.length > 0)
           setTimeout(() => {
             if (this.autoplay) this.read();
-          }, (this.duration - 1) * 1000 + Math.random() * 2000);
+          }, _getRandom((this.duration - 1) * 1000, (this.duration + 1) * 1000));
       };
+      utter.rate = _getRandom(0.5, 2);
+      utter.pitch = _getRandom(0.5, 2);
+      utter.volume = _getRandom(0.5, 1);
       speechSynthesis.speak(utter);
     }
   }
