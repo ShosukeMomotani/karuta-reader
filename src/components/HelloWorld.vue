@@ -38,6 +38,10 @@ const _getRandom = (min, max) => {
   return min + Math.random() * (max - min);
 };
 
+const _checkOdds = odds => {
+  return Math.random() <= odds;
+};
+
 export default {
   name: "HelloWorld",
   props: {},
@@ -46,12 +50,17 @@ export default {
       cards: require("../data/cards.json"),
       selected: "",
       autoplay: false,
-      duration: 5
+      duration: 5,
+      trashes: []
     };
   },
   methods: {
     read: function() {
       if (this.cards.length === 0) return;
+
+      // trap
+      const cards =
+        this.trashes.length > 0 && _checkOdds(0.05) ? this.trashes : this.cards;
 
       // shuffle
       (array => {
@@ -61,15 +70,16 @@ export default {
           array[i] = array[r];
           array[r] = tmp;
         }
-      })(this.cards);
+      })(cards);
 
       // pickup
-      const selected = this.cards.pop();
+      const selected = cards.pop();
 
       // speech
       const utter = new SpeechSynthesisUtterance(selected);
       utter.onend = () => {
         this.selected = selected;
+        this.trashes.push(selected);
 
         // autoplay
         if (this.autoplay && this.cards.length > 0)
