@@ -1,24 +1,38 @@
 <template>
   <div class="hello">
     <div class="container">
-      <form class="form-inline justify-content-center">
-        <div class="col-auto">
-          <button class="btn btn-primary" type="button" v-on:click="read()">スタート</button>
+      <form class="form-horizontal">
+        <div class="form-group row">
+          <label for="num-duration" class="col-sm-2 col-form-label">Duration</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="number" id="num-duration" v-model.number="duration" />
+          </div>
         </div>
-        <div class="col-auto">
-          <div class="form-check mb-2">
+        <div class="form-group row">
+          <label for="num-trap-rate" class="col-sm-2 col-form-label">Trap Rate</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="number" id="num-trap-rate" v-model.number="trapRate" />
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="num-jump-in-rate" class="col-sm-2 col-form-label">Jump In Rate</label>
+          <div class="col-sm-10">
+            <input
+              class="form-control"
+              type="number"
+              id="num-jump-in-rate"
+              v-model.number="jumpInRate"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-offset-2 col-xs-10">
             <input class="form-check-input" type="checkbox" id="check-autoplay" v-model="autoplay" />
             <label class="form-check-label" for="check-autoplay">Auto Play</label>
           </div>
         </div>
-        <div class="col-auto">
-          <input
-            class="form-control"
-            type="number"
-            id="num-duration"
-            placeholder="Duration"
-            v-model.number="duration"
-          />
+        <div class="form-group">
+          <button class="btn btn-primary" type="button" v-on:click="read()">スタート</button>
         </div>
       </form>
     </div>
@@ -27,7 +41,7 @@
     </div>
     <div class="container">
       <ul class="list-group">
-        <li class="list-group-item" v-for="item in cards" :key="item">{{ item }}</li>
+        <li class="list-group-item" v-for="(item, index) in cards" :key="index">{{ item.join(" ") }}</li>
       </ul>
     </div>
   </div>
@@ -51,6 +65,8 @@ export default {
       selected: "",
       autoplay: false,
       duration: 5,
+      trapRate: 5,
+      jumpInRate: 10,
       trashes: []
     };
   },
@@ -60,7 +76,9 @@ export default {
 
       // trap
       const cards =
-        this.trashes.length > 0 && _checkOdds(0.05) ? this.trashes : this.cards;
+        this.trashes.length > 0 && _checkOdds(this.trapRate / 100)
+          ? this.trashes
+          : this.cards;
 
       // shuffle
       (array => {
@@ -76,9 +94,13 @@ export default {
       const selected = cards.pop();
 
       // speech
-      const utter = new SpeechSynthesisUtterance(selected);
+      const text = (_checkOdds(this.jumpInRate / 100)
+        ? selected.slice(1)
+        : selected
+      ).join("、");
+      const utter = new SpeechSynthesisUtterance(text);
       utter.onend = () => {
-        this.selected = selected;
+        this.selected = text;
         this.trashes.push(selected);
 
         // autoplay
