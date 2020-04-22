@@ -2,6 +2,30 @@
   <div class="hello">
     <div class="container">
       <form class="form-horizontal">
+        <div class="form-group">
+          <div class="col-xs-offset-2 col-xs-10">
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                id="radio-pokemon"
+                value="pokemon"
+                v-model="cardset"
+              />
+              <label class="form-check-label" for="radio-pokemon">ポケモン</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                id="radio-nazonazo"
+                value="nazonazo"
+                v-model="cardset"
+              />
+              <label class="form-check-label" for="radio-nazonazo">なぞなぞ</label>
+            </div>
+          </div>
+        </div>
         <div class="form-group row">
           <label for="num-duration" class="col-sm-2 col-form-label">Duration</label>
           <div class="col-sm-10">
@@ -56,12 +80,18 @@ const _checkOdds = odds => {
   return Math.random() <= odds;
 };
 
+const cardSets = {
+  pokemon: require("../data/cards_pokemon.json"),
+  nazonazo: require("../data/cards_nazonazo.json")
+};
+
 export default {
   name: "HelloWorld",
   props: {},
   data: function() {
     return {
-      cards: require("../data/cards.json"),
+      cardset: "pokemon",
+      cards: cardSets["pokemon"].slice(),
       selected: "",
       autoplay: false,
       duration: 5,
@@ -69,6 +99,12 @@ export default {
       jumpInRate: 10,
       trashes: []
     };
+  },
+  watch: {
+    cardset: function(set) {
+      this.cards = cardSets[set].slice();
+      this.trashes = [];
+    }
   },
   methods: {
     read: function() {
