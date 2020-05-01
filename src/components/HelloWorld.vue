@@ -7,20 +7,20 @@
             <div class="form-check form-check-inline">
               <input
                 class="form-check-input"
-                type="radio"
+                type="checkbox"
                 id="radio-pokemon"
                 value="pokemon"
-                v-model="cardset"
+                v-model="cardsetPokemon"
               />
               <label class="form-check-label" for="radio-pokemon">ポケモン</label>
             </div>
             <div class="form-check form-check-inline">
               <input
                 class="form-check-input"
-                type="radio"
+                type="checkbox"
                 id="radio-nazonazo"
                 value="nazonazo"
-                v-model="cardset"
+                v-model="cardsetNazonazo"
               />
               <label class="form-check-label" for="radio-nazonazo">なぞなぞ</label>
             </div>
@@ -90,7 +90,8 @@ export default {
   props: {},
   data: function() {
     return {
-      cardset: "pokemon",
+      cardsetPokemon: true,
+      cardsetNazonazo: false,
       cards: cardSets["pokemon"].slice(),
       selected: "",
       autoplay: false,
@@ -101,8 +102,20 @@ export default {
     };
   },
   watch: {
-    cardset: function(set) {
-      this.cards = cardSets[set].slice();
+    cardsetPokemon: function() {
+      this.cards = [];
+      if (this.cardsetPokemon)
+        this.cards = this.cards.concat(cardSets.pokemon.slice());
+      if (this.cardsetNazonazo)
+        this.cards = this.cards.concat(cardSets.nazonazo.slice());
+      this.trashes = [];
+    },
+    cardsetNazonazo: function() {
+      this.cards = [];
+      if (this.cardsetPokemon)
+        this.cards = this.cards.concat(cardSets.pokemon.slice());
+      if (this.cardsetNazonazo)
+        this.cards = this.cards.concat(cardSets.nazonazo.slice());
       this.trashes = [];
     }
   },
